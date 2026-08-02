@@ -1,0 +1,20 @@
+{
+  "GameVersion": "1.22.6",
+  "SizeX": 2,
+  "SizeY": 2,
+  "SizeZ": 1,
+  "BlockCodes": {
+    "1": "game:rock-granite",
+    "2": "game:water-still-7",
+    "3": "game:meta-filler"
+  },
+  "ItemCodes": {},
+  "Indices": [0, 1048576, 1048576, 1],
+  "BlockIds": [1, 1, 2, 3],
+  "DecorIndices": [],
+  "DecorIds": [],
+  "BlockEntities": {},
+  "Entities": [],
+  "ReplaceMode": 2,
+  "EntranceRotation": -1
+}

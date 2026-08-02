@@ -48,5 +48,8 @@ jobs:
       - name: Build
         run: dotnet build Structopedia.slnx -c Release
 
+      # Detailed verbosity so the integration tests print how many vanilla schematics they parsed:
+      # those tests skip themselves when the game assets are missing, and a silent skip would
+      # otherwise be indistinguishable from a pass.
       - name: Test
-        run: dotnet test tests/Structopedia.Pure.Tests -c Release
+        run: dotnet test tests/Structopedia.Pure.Tests -c Release --logger "console;verbosity=detailed"
