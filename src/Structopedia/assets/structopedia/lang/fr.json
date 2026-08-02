@@ -1,6 +1,15 @@
 {
   "game:handbook-category-structures": "Structures",
-  "spike-vug-title": "Spike : géode de cristal",
-  "spike-vug-intro": "Spike de rendu. Cette page dessine un schematic de worldgen comme un vrai mesh 3D dans le flux de texte du manuel, pour vérifier le clipping, le défilement et la profondeur face à la passe GUI.",
-  "spike-vug-controls": "Clic gauche glissé pour tourner, clic droit glissé verticalement pour zoomer."
+  "source-game": "Fourni avec Vintage Story",
+  "source-mod": "Ajouté par le mod {0}",
+  "variant": "Variante {0} sur {1} : {2}",
+  "dimensions": "Taille : {0} x {1} x {2} blocs",
+  "preview-controls": "Clic gauche glissé pour tourner, clic droit glissé ou molette pour zoomer.",
+  "preview-truncated": "L’aperçu s’arrête à {0} sommets. Dessiner la structure entière demande des optimisations prévues pour une version ultérieure.",
+  "preview-unavailable": "Aucun bloc de cette structure ne peut être dessiné, il n’y a donc pas d’aperçu.",
+  "load-failed": "Ce schematic n’a pas pu être lu.",
+  "blocks-used": "Blocs utilisés",
+  "block-count": "x {0}",
+  "unknown-block": "{0} x {1}, bloc non installé",
+  "more-blocks": "et {0} autres types de blocs"
 }

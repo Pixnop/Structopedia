@@ -1,6 +1,15 @@
 {
   "game:handbook-category-structures": "Structures",
-  "spike-vug-title": "Spike: crystal vug preview",
-  "spike-vug-intro": "Render spike. This page draws a worldgen schematic as a real 3D mesh inside the handbook text flow, to check clipping, scrolling and depth against the GUI pass.",
-  "spike-vug-controls": "Left-drag to rotate, right-drag vertically to zoom."
+  "source-game": "Shipped with Vintage Story",
+  "source-mod": "Added by the mod {0}",
+  "variant": "Variant {0} of {1}: {2}",
+  "dimensions": "Size: {0} x {1} x {2} blocks",
+  "preview-controls": "Left-drag to rotate, right-drag or scroll to zoom.",
+  "preview-truncated": "The preview stops at {0} vertices. Drawing the whole structure needs optimisations that are coming in a later release.",
+  "preview-unavailable": "None of the blocks of this structure can be drawn, so there is no preview.",
+  "load-failed": "This schematic could not be read.",
+  "blocks-used": "Blocks used",
+  "block-count": "x {0}",
+  "unknown-block": "{0} x {1}, block not installed",
+  "more-blocks": "and {0} more block types"
 }
