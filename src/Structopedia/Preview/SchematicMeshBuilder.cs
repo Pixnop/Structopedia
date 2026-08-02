@@ -120,6 +120,7 @@ internal static class SchematicMeshBuilder
             {
                 case BlockRole.MetaMarker:
                 case BlockRole.MultiblockGhost:
+                case BlockRole.WorldgenRandomizer:
                     result.FilteredCount++;
                     continue;
 

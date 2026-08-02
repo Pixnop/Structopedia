@@ -132,6 +132,20 @@ public sealed class BlockTallyTests
     }
 
     [Fact]
+    public void Count_Excludes_Worldgen_Randomizers_And_Counts_Them_Apart()
+    {
+        TallyResult result = BlockTally.Count(
+        [
+            Cell("game:randomizer-normal"),
+            Cell("game:randomizer-normal"),
+            Cell("game:rock-granite")
+        ]);
+
+        Assert.Equal(["game:rock-granite"], Codes(result));
+        Assert.Equal(2, result.RandomizerCount);
+    }
+
+    [Fact]
     public void Count_Counts_Unresolved_Codes_Apart()
     {
         TallyResult result = BlockTally.Count([new SchematicCell(0, 0, 0, null, false), Cell("game:rock-granite")]);
@@ -152,6 +166,7 @@ public sealed class BlockTallyTests
             Cell("game:multiblock-monolithic-2x1x0"),
             new SchematicCell(4, 0, 0, null, false),
             Cell("game:meta-underground"),
+            Cell("game:randomizer-normal"),
             Cell("game:rock-granite")
         ]);
 
@@ -160,6 +175,7 @@ public sealed class BlockTallyTests
         Assert.Equal(1, result.Blocks[1].Count);
         Assert.Equal(2, result.MetaCount);
         Assert.Equal(1, result.MultiblockCount);
+        Assert.Equal(1, result.RandomizerCount);
         Assert.Equal(1, result.UnknownCount);
     }
 

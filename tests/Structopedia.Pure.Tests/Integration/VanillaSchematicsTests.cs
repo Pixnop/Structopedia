@@ -43,6 +43,13 @@ public sealed class VanillaSchematicsTests
     /// <summary>Those 540 files hold 75209 chiselled blocks between them.</summary>
     private const int MinimumChiselledCellCount = 50_000;
 
+    /// <summary>
+    /// The 1.22.6 schematics place 712 <c>randomizer-normal</c> blocks. Those turn into whatever the
+    /// randomizer holds while a structure generates, so a preview that drew them would be showing
+    /// pink cubes that exist nowhere in the world.
+    /// </summary>
+    private const int MinimumRandomizerCellCount = 700;
+
     private readonly ITestOutputHelper _output;
 
     public VanillaSchematicsTests(ITestOutputHelper output)
@@ -142,6 +149,53 @@ public sealed class VanillaSchematicsTests
         Assert.NotEmpty(tally.Blocks);
         Assert.True(tally.MetaCount > 0, "The vug is expected to carry worldgen markers.");
         Assert.DoesNotContain(tally.Blocks, row => row.Code.Path.StartsWith("meta-", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void The_Worldgen_Randomizers_Are_Left_Out_Of_Every_Block_List()
+    {
+        if (!TryResolveSchematicsFolder(out string folder))
+        {
+            return;
+        }
+
+        string[] files = Directory.GetFiles(folder, "*.json", SearchOption.AllDirectories);
+        var listed = new List<string>();
+        int randomizerCells = 0;
+        int filesWithRandomizers = 0;
+
+        foreach (string file in files)
+        {
+            string error = string.Empty;
+            BlockSchematic? schematic = BlockSchematic.LoadFromString(File.ReadAllText(file), ref error);
+            if (schematic == null)
+            {
+                continue;
+            }
+
+            TallyResult tally = BlockTally.Count(SchematicCellReader.ReadCells(schematic));
+            if (tally.RandomizerCount > 0)
+            {
+                filesWithRandomizers++;
+                randomizerCells += tally.RandomizerCount;
+            }
+
+            foreach ((AssetLocation code, int _) in tally.Blocks)
+            {
+                if (code.Path.StartsWith("randomizer", StringComparison.Ordinal))
+                {
+                    listed.Add($"{Path.GetRelativePath(folder, file)}: {code}");
+                }
+            }
+        }
+
+        _output.WriteLine(
+            $"Filtered {randomizerCells} worldgen randomizers across {filesWithRandomizers} of {files.Length} schematics.");
+
+        Assert.True(
+            randomizerCells >= MinimumRandomizerCellCount,
+            $"Only {randomizerCells} worldgen randomizers were recognised.");
+        Assert.True(listed.Count == 0, Describe("still listed a worldgen randomizer", listed));
     }
 
     /// <summary>
