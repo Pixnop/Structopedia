@@ -16,6 +16,12 @@ ruin can be read floor by floor, and chiselled blocks are drawn from their real 
 than as placeholders. Still to come: dropping the blocks nobody can see, which is what
 would let the heaviest structures be drawn whole.
 
+The tab opens on the build guides, which are schematics of the multiblock machines the game
+expects a player to assemble block by block: the cementation furnace, the charcoal pit and
+the bloomery so far. They are written here rather than shipped by the game, so every layout
+is derived from the validation code of the version the mod targets, and the tests replay that
+validation against the files. The rules the game checks are spelled out on the page.
+
 ## Requirements
 
 The .NET 10 SDK, and a Vintage Story 1.22.6 install to compile against. Set the
@@ -40,10 +46,11 @@ dotnet test tests/Structopedia.Pure.Tests -c Release
 ```
 
 The tests run against the API assembly without launching the game, so the whole suite takes
-about a second. Most are plain unit tests over the pure logic. A couple read the worldgen
+about a second. Most are plain unit tests over the pure logic. A few read the worldgen
 schematics from the install `VINTAGE_STORY` points at and replay the decoding rules against
-every one of them, roughly two million cells. Those two skip themselves, still green, when
-that folder is not there, so the suite works without a game install. CI runs the same two
+every one of them, roughly two million cells; one more reads the block type declaring the
+cementation furnace and checks the build guide against it. Those skip themselves, still
+green, when the install is not there, so the suite works without a game. CI runs the same two
 commands on every push and pull request.
 
 ## Package
