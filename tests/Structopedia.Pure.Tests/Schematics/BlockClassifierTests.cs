@@ -26,6 +26,15 @@ public sealed class BlockClassifierTests
     }
 
     [Theory]
+    [InlineData("game:randomizer-normal")]
+    [InlineData("game:randomizer")]
+    [InlineData("somemod:randomizer-normal")]
+    public void Classify_Reports_Worldgen_Randomizers(string code)
+    {
+        Assert.Equal(BlockRole.WorldgenRandomizer, BlockClassifier.Classify(new AssetLocation(code)));
+    }
+
+    [Theory]
     [InlineData("game:metal-plate-copper")]
     [InlineData("game:meta")]
     [InlineData("game:metalpress")]
@@ -33,6 +42,7 @@ public sealed class BlockClassifierTests
     [InlineData("game:water-still-7")]
     [InlineData("game:crystal-smokyquartz-large1-up")]
     [InlineData("somemod:multi-block-thing")]
+    [InlineData("somemod:randomizerbox")]
     public void Classify_Reports_Everything_Else_As_Visible(string code)
     {
         Assert.Equal(BlockRole.Visible, BlockClassifier.Classify(new AssetLocation(code)));

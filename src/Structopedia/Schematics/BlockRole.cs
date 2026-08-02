@@ -12,6 +12,12 @@ internal enum BlockRole
     /// <summary>A placeholder standing in for part of a multiblock structure.</summary>
     MultiblockGhost,
 
+    /// <summary>
+    /// A worldgen randomizer, which swaps itself for one of the blocks it holds while a structure is
+    /// generated and is therefore never part of the structure a player sees.
+    /// </summary>
+    WorldgenRandomizer,
+
     /// <summary>The schematic referenced a block id its own code table does not define.</summary>
     UnknownCode
 }

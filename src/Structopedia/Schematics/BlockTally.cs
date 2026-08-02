@@ -22,6 +22,7 @@ internal static class BlockTally
         var counts = new Dictionary<AssetLocation, int>();
         int metaCount = 0;
         int multiblockCount = 0;
+        int randomizerCount = 0;
         int unknownCount = 0;
 
         foreach (SchematicCell cell in cells)
@@ -34,6 +35,10 @@ internal static class BlockTally
 
                 case BlockRole.MultiblockGhost:
                     multiblockCount++;
+                    break;
+
+                case BlockRole.WorldgenRandomizer:
+                    randomizerCount++;
                     break;
 
                 case BlockRole.UnknownCode:
@@ -59,6 +64,6 @@ internal static class BlockTally
             ? right.Count.CompareTo(left.Count)
             : string.CompareOrdinal(left.Code.ToString(), right.Code.ToString()));
 
-        return new TallyResult(blocks, metaCount, multiblockCount, unknownCount);
+        return new TallyResult(blocks, metaCount, multiblockCount, randomizerCount, unknownCount);
     }
 }
