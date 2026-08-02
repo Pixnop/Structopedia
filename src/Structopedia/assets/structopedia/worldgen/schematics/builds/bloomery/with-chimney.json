@@ -1,0 +1,25 @@
+{
+ "GameVersion": "1.22.6",
+ "SizeX": 1,
+ "SizeY": 2,
+ "SizeZ": 1,
+ "BlockCodes": {
+  "1": "game:bloomerybase-north",
+  "2": "game:bloomerychimney"
+ },
+ "ItemCodes": {},
+ "Indices": [
+  0,
+  1048576
+ ],
+ "BlockIds": [
+  1,
+  2
+ ],
+ "DecorIndices": [],
+ "DecorIds": [],
+ "BlockEntities": {},
+ "Entities": [],
+ "ReplaceMode": 2,
+ "EntranceRotation": -1
+}
