@@ -2,6 +2,7 @@
   "game:handbook-category-structures": "Structures",
   "source-game": "Fourni avec Vintage Story",
   "source-mod": "Ajouté par le mod {0}",
+  "source-curated": "Guide de construction",
   "variant": "Variante {0} sur {1} : {2}",
   "dimensions": "Taille : {0} x {1} x {2} blocs",
   "preview-controls": "Clic gauche glissé pour tourner, clic droit glissé ou molette pour zoomer. Faites glisser le curseur sous l’aperçu, ou maintenez Ctrl avec la molette, pour couper la structure à une couche.",
@@ -12,5 +13,11 @@
   "blocks-used": "Blocs utilisés",
   "block-count": "x {0}",
   "unknown-block": "{0} x {1}, bloc non installé",
-  "more-blocks": "et {0} autres types de blocs"
+  "more-blocks": "et {0} autres types de blocs",
+  "build-title-cementation-furnace": "Four à cémentation",
+  "build-title-charcoal-pit": "Meule à charbon",
+  "build-title-bloomery": "Bas fourneau",
+  "build-desc-cementation-furnace": "Deux sections de cercueil de pierre face à face dans une coque de briques réfractaires, posées sur un plancher de six grilles. Le jeu vérifie quatre-vingts positions autour de la section orientée au nord, et le vide intérieur en fait partie : cet espace doit rester libre. Le conduit au-dessus des couvercles accepte des grilles ou rien du tout. N’importe quel niveau de brique convient, les niveaux élevés se fissurent moins souvent. La porte peut être une porte en métal pleine ou fenêtrée, ou une ancienne porte en fer. La chaleur vient d’en dessous, de deux tas de charbon allumés deux blocs sous les sections. L’ensemble contient seize lingots cémentables et cinq couches de huit morceaux de coke ou de charbon de bois, une couche pour quatre lingots, et les deux couvercles doivent être posés avant que quoi que ce soit ne démarre.",
+  "build-desc-charcoal-pit": "Des piles de bois de chauffage empilées en bloc, la fosse à charbon posée sur l’une d’elles, la terre refermant le tout. Le combustible, c’est une pile de bois posée au sol, et une pile pleine de trente-deux bûches rend le plus de charbon. Le scellement, c’est n’importe quel bloc qui ne brûle pas et qui présente une face pleine à la pile, ce que fait la terre. Toutes les faces comptent, le dessous compris. La meule se propage du bloc allumé aux piles qui le touchent, et s’arrête à onze blocs sur un axe. Allumez, puis refermez le dernier trou dans la demi-heure de jeu qui suit. Une ouverture trouvée après ce délai relance la cuisson de dix-huit heures et peut mettre le feu au bois.",
+  "build-desc-bloomery": "Une base de bas fourneau avec sa cheminée un bloc au-dessus. Sans cette cheminée, le jeu refuse tout simplement de l’allumer. Il accepte jusqu’à six unités de combustible qui brûlent à 1200 degrés ou plus pendant plus de trente secondes, donc du charbon de bois ou du coke, et du minerai qui fond entre 1000 et 1500 degrés. La capacité en minerai vaut six fois le ratio de fonte de ce minerai, soit cent vingt pépites de fer pour six charbons, et l’allumage ne marche que si le nombre de minerais reste inférieur ou égal à ce ratio multiplié par le nombre de combustibles. Une chauffe dure dix heures de jeu, et casser la base ensuite fait tomber la loupe ferreuse."
 }

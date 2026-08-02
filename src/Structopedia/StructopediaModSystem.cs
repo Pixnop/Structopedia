@@ -122,18 +122,26 @@ public sealed class StructopediaModSystem : ModSystem
 
         IReadOnlyList<SchematicScanEntry> entries = SchematicScanner.Scan(api, Mod.Logger);
 
-        var sourcesByVariant = new Dictionary<(StructureOrigin Origin, string RelativePath), SchematicSource>();
         var scanned = new List<ScannedSchematic>(entries.Count);
-        var origins = new HashSet<StructureOrigin>();
-
         foreach (SchematicScanEntry entry in entries)
         {
             scanned.Add(entry.Schematic);
-            sourcesByVariant[(entry.Schematic.Origin, entry.Schematic.RelativePath)] = entry.Source;
-            origins.Add(entry.Schematic.Origin);
         }
 
-        IReadOnlyList<StructureGroup> groups = CatalogBuilder.Build(scanned);
+        // Relabelled before anything is keyed by origin, so the catalog and the lookup below agree on
+        // which origin a guide belongs to.
+        IReadOnlyList<ScannedSchematic> labelled = CuratedOrigins.Apply(scanned, Mod.Info.Name ?? string.Empty);
+
+        var sourcesByVariant = new Dictionary<(StructureOrigin Origin, string RelativePath), SchematicSource>();
+        var origins = new HashSet<StructureOrigin>();
+
+        for (int i = 0; i < entries.Count; i++)
+        {
+            sourcesByVariant[(labelled[i].Origin, labelled[i].RelativePath)] = entries[i].Source;
+            origins.Add(labelled[i].Origin);
+        }
+
+        IReadOnlyList<StructureGroup> groups = CatalogBuilder.Build(labelled);
 
         var listed = new List<StructureGroup>(groups.Count);
         foreach (StructureGroup group in groups)

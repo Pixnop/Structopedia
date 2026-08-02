@@ -113,6 +113,29 @@ public sealed class CuratedBuildSchematicsTests
     }
 
     /// <summary>
+    /// A guide whose folder has no title and no rules reads as a humanised path with nothing under
+    /// it, which is the one thing a guide must not be. English is the reference, French follows it.
+    /// </summary>
+    [Fact]
+    public void Every_Guide_Is_Named_And_Described_In_Both_Languages()
+    {
+        string langFolder = Path.Combine(AppContext.BaseDirectory, "assets/structopedia/lang");
+
+        foreach (string language in new[] { "en", "fr" })
+        {
+            JObject entries = JObject.Parse(File.ReadAllText(Path.Combine(langFolder, language + ".json")));
+
+            Assert.NotNull(entries["source-curated"]);
+
+            foreach (string folder in Expected.Select(path => path.Split('/')[0]).Distinct())
+            {
+                Assert.True(entries[$"build-title-{folder}"] != null, $"{language}.json has no title for {folder}.");
+                Assert.True(entries[$"build-desc-{folder}"] != null, $"{language}.json has no rules for {folder}.");
+            }
+        }
+    }
+
+    /// <summary>
     /// Replays <c>MultiblockStructure.InCompleteBlockCount</c> over the furnace guide, reading the
     /// offsets and the accepted codes from the block type the game ships rather than from a copy of
     /// them. Air is a required part of that structure, so a cell the guide leaves empty is checked

@@ -137,6 +137,33 @@ public sealed class CatalogBuilderTests
     }
 
     [Fact]
+    public void Build_Sorts_Curated_Groups_Before_Everything_Else()
+    {
+        IReadOnlyList<StructureGroup> groups = CatalogBuilder.Build(
+        [
+            Game("story/devastation/gear/gear-1.json"),
+            Game("aqueduct/arch1.json"),
+            Curated("builds/charcoal-pit/sealed-mound.json")
+        ]);
+
+        Assert.Equal(
+            ["Builds / Charcoal pit", "Aqueduct", "Story / Devastation / Gear"],
+            groups.Select(group => group.Title));
+    }
+
+    [Fact]
+    public void Build_Sorts_Curated_Groups_Among_Themselves_By_Title()
+    {
+        IReadOnlyList<StructureGroup> groups = CatalogBuilder.Build(
+        [
+            Curated("builds/charcoal-pit/sealed-mound.json"),
+            Curated("builds/bloomery/with-chimney.json")
+        ]);
+
+        Assert.Equal(["Builds / Bloomery", "Builds / Charcoal pit"], groups.Select(group => group.Title));
+    }
+
+    [Fact]
     public void Build_Never_Merges_Two_Origins_Sharing_A_Folder()
     {
         IReadOnlyList<StructureGroup> groups = CatalogBuilder.Build(
@@ -192,4 +219,7 @@ public sealed class CatalogBuilderTests
 
     private static ScannedSchematic Mod(string relativePath)
         => new(relativePath, new StructureOrigin(StructureOriginKind.Mod, "Some mod"));
+
+    private static ScannedSchematic Curated(string relativePath)
+        => new(relativePath, new StructureOrigin(StructureOriginKind.Curated, "Structopedia"));
 }

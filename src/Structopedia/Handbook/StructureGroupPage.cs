@@ -78,9 +78,13 @@ internal sealed class StructureGroupPage : GuiHandbookPage
         parsed = new BlockSchematic?[group.Variants.Count];
         parseAttempted = new bool[group.Variants.Count];
 
-        listTitle = group.Origin.Kind == StructureOriginKind.Game
-            ? group.Title
-            : group.Title + " (" + group.Origin.DisplayName + ")";
+        string title = TranslatedTitle(group);
+
+        // A guide is named after the machine it builds, and its origin line already says who wrote
+        // it, so it is spared the "(mod name)" suffix that tells apart two mods shipping one folder.
+        listTitle = group.Origin.Kind is StructureOriginKind.Game or StructureOriginKind.Curated
+            ? title
+            : title + " (" + group.Origin.DisplayName + ")";
 
         searchTitle = StringUtil.ToSearchFriendly(listTitle);
         searchText = StringUtil.ToSearchFriendly(BuildSearchText());
@@ -119,6 +123,12 @@ internal sealed class StructureGroupPage : GuiHandbookPage
             "<strong>" + listTitle + "</strong>\n",
             CairoFont.WhiteSmallishText()));
         AddLine(components, OriginLine(), CairoFont.WhiteDetailText());
+
+        string? description = TranslatedDescription();
+        if (description != null)
+        {
+            AddLine(components, description, CairoFont.WhiteSmallText());
+        }
 
         AddVariantNavigation(components, openDetailPageFor);
 
@@ -206,10 +216,49 @@ internal sealed class StructureGroupPage : GuiHandbookPage
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Names the machine a guide builds, when we wrote a name for it. Only our own guides are
+    /// looked up: a base game folder that happens to be called <c>bloomery</c> is not one of ours
+    /// and must keep the title its path gives it.
+    /// </summary>
+    private static string TranslatedTitle(StructureGroup group)
+    {
+        if (group.Origin.Kind != StructureOriginKind.Curated)
+        {
+            return group.Title;
+        }
+
+        string key = BuildKeys.Title(group.Key);
+
+        // Exact keys only: the wildcard lookup would answer for a pattern some other mod registered,
+        // and it logs a miss for every key it does not find.
+        return key.Length > 0 && Lang.HasTranslation(key, findWildcarded: false)
+            ? Lang.Get(key)
+            : group.Title;
+    }
+
     private string OriginLine()
-        => group.Origin.Kind == StructureOriginKind.Game
-            ? Lang.Get("structopedia:source-game")
-            : Lang.Get("structopedia:source-mod", group.Origin.DisplayName);
+        => group.Origin.Kind switch
+        {
+            StructureOriginKind.Game => Lang.Get("structopedia:source-game"),
+            StructureOriginKind.Curated => Lang.Get("structopedia:source-curated"),
+            _ => Lang.Get("structopedia:source-mod", group.Origin.DisplayName)
+        };
+
+    /// <summary>
+    /// Reads the rules of a guide: what the game checks when it decides whether the build works.
+    /// </summary>
+    /// <returns>The paragraph, or null when the group has none.</returns>
+    private string? TranslatedDescription()
+    {
+        if (group.Origin.Kind != StructureOriginKind.Curated)
+        {
+            return null;
+        }
+
+        string key = BuildKeys.Description(group.Key);
+        return key.Length > 0 && Lang.HasTranslation(key, findWildcarded: false) ? Lang.Get(key) : null;
+    }
 
     private void Recompose(ICoreClientAPI api)
     {
