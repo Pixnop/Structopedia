@@ -1,0 +1,6 @@
+{
+  "game:handbook-category-structures": "Structures",
+  "spike-vug-title": "Spike : géode de cristal",
+  "spike-vug-intro": "Spike de rendu. Cette page dessine un schematic de worldgen comme un vrai mesh 3D dans le flux de texte du manuel, pour vérifier le clipping, le défilement et la profondeur face à la passe GUI.",
+  "spike-vug-controls": "Clic gauche glissé pour tourner, clic droit glissé verticalement pour zoomer."
+}

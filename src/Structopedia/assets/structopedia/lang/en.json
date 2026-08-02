@@ -1,0 +1,6 @@
+{
+  "game:handbook-category-structures": "Structures",
+  "spike-vug-title": "Spike: crystal vug preview",
+  "spike-vug-intro": "Render spike. This page draws a worldgen schematic as a real 3D mesh inside the handbook text flow, to check clipping, scrolling and depth against the GUI pass.",
+  "spike-vug-controls": "Left-drag to rotate, right-drag vertically to zoom."
+}

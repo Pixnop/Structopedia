@@ -21,6 +21,10 @@
     <None Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- Mirrors assets/<domain>/... into $(TargetDir)assets/, which PackMod then zips. -->
+    <None Include="assets/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!--
