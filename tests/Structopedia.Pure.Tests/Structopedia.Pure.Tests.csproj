@@ -26,6 +26,21 @@
       <HintPath>$(VINTAGE_STORY)\VintagestoryAPI.dll</HintPath>
       <Private>true</Private>
     </Reference>
+    <!--
+      BlockSchematic is a protobuf contract, so deserializing one loads protobuf-net even when the
+      payload is json. The game ships it; only the test host needs a copy of its own.
+    -->
+    <Reference Include="protobuf-net">
+      <HintPath>$(VINTAGE_STORY)\Lib\protobuf-net.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Hand written schematics used to exercise the parser, including its failure path. -->
+  <ItemGroup>
+    <None Update="Fixtures/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

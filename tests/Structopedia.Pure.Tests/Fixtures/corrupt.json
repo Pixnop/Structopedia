@@ -1,0 +1,7 @@
+{
+  "GameVersion": "1.22.6",
+  "SizeX": 2,
+  "SizeY": 2,
+  "SizeZ": 1,
+  "BlockCodes": { "1": "game:rock-granite",
+  "Indices": [0, 1048576,
