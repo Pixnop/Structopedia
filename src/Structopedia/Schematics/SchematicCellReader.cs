@@ -9,7 +9,7 @@ namespace Structopedia.Schematics;
 /// </summary>
 internal static class SchematicCellReader
 {
-    /// <summary>Number of bits each packed coordinate occupies.</summary>
+    /// <summary>Keeps the ten bits a single coordinate occupies inside a packed index.</summary>
     private const int CoordinateMask = 0x3FF;
 
     /// <summary>Bit offset of the Z coordinate inside a packed index.</summary>
