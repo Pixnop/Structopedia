@@ -305,6 +305,13 @@ internal sealed class StructurePreviewComponent : RichTextComponentBase
 
         capi.Render.PushScissor(clipBounds, stacking: true);
 
+        // The page background has already written its depth across this rectangle, and Lequal
+        // discards every mesh fragment sitting behind that plane, which sliced the structure along a
+        // screen-parallel cut. Clearing the depth first, inside the scissor, leaves the mesh with
+        // nothing to test against but itself.
+        capi.Render.ClearFrameBuffer(
+            capi.Render.CurrentFrameBuffer, null, clearDepthBuffer: true, clearColorBuffers: false);
+
         // Both the zoom and the structure decide how deep the mesh grows, and the zoom moves under
         // the wheel, so where it has to be centred is worked out again on every frame.
         double centerZ = PreviewDepth.CenterZ(renderZ, zoom, entry.Diagonal);
