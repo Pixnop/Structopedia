@@ -41,12 +41,6 @@ internal sealed class StructurePreviewComponent : RichTextComponentBase
     /// <summary>Unscaled gap between the track and the label under it.</summary>
     private const double UnscaledLabelTopGap = 9.0;
 
-    /// <summary>
-    /// Depth offset added to the rich text z. Mirrors the vanilla slideshow component, which draws its
-    /// flat texture at <c>GuiElementRichtext.zPos</c> (50) and its 3D stack at 100.
-    /// </summary>
-    private const float RenderZOffset = 50f;
-
     /// <summary>Share of the viewport height the structure diagonal should occupy at rest.</summary>
     private const float FitRatio = 0.75f;
 
@@ -311,9 +305,13 @@ internal sealed class StructurePreviewComponent : RichTextComponentBase
 
         capi.Render.PushScissor(clipBounds, stacking: true);
 
+        // Both the zoom and the structure decide how deep the mesh grows, and the zoom moves under
+        // the wheel, so where it has to be centred is worked out again on every frame.
+        double centerZ = PreviewDepth.CenterZ(renderZ, zoom, entry.Diagonal);
+
         modelMat
             .Identity()
-            .Translate(lastRenderX + (lastRenderWidth / 2.0), lastRenderY + (viewportHeight / 2.0), renderZ + RenderZOffset)
+            .Translate(lastRenderX + (lastRenderWidth / 2.0), lastRenderY + (viewportHeight / 2.0), centerZ)
             .Scale(zoom, -zoom, zoom)
             .RotateXDeg(pitch)
             .RotateYDeg(yaw)
@@ -358,6 +356,16 @@ internal sealed class StructurePreviewComponent : RichTextComponentBase
         prog.Uniform("alphaTest", 0f);
         prog.Uniform("rgbaGlowIn", new Vec4f(0f, 0f, 0f, 0f));
 
+        // A pushed mesh writes a depth well in front of the flat gui elements, so a tooltip drawn
+        // over the viewport afterwards would lose the depth test against it. Putting the depth back
+        // to the far value lets those elements through. GL clears honour the scissor test, which is
+        // still on here, so nothing outside the viewport is touched, and asking for the depth buffer
+        // alone leaves the mesh we just drew on screen. Same call the game makes to reset the depth
+        // of its item stack framebuffer (decompiled 1.22.6,
+        // Vintagestory.Client.NoObf/InventoryItemRenderer.cs:178).
+        capi.Render.ClearFrameBuffer(
+            capi.Render.CurrentFrameBuffer, null, clearDepthBuffer: true, clearColorBuffers: false);
+
         capi.Render.PopScissor();
     }
 
@@ -374,7 +382,9 @@ internal sealed class StructurePreviewComponent : RichTextComponentBase
     private void RenderSlider(PreviewEntry entry, double renderZ)
     {
         LoadedTexture fill = EnsureFillTexture();
-        float z = (float)(renderZ + RenderZOffset);
+
+        // Flat parts, no depth of their own: they stay at the resting z whatever the mesh does.
+        float z = (float)(renderZ + PreviewDepth.RenderZOffset);
 
         double trackX = TrackX;
         double trackWidth = TrackWidth;
