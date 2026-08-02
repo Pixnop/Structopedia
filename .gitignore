@@ -21,12 +21,11 @@ Thumbs.db
 .env
 .env.local
 
-# Claude-related artifacts (NEVER versioned)
+# Local workspace files (never versioned)
 .claude/
 CLAUDE.md
 claude.md
 AGENTS.md
-docs/feasibility-spike.md
 docs/specs/
 docs/plans/
 docs/wiki/
@@ -55,9 +54,3 @@ MODDB.md
 DISCORD.md
 GITHUB-REPLIES.md
 *-logo-480.png
-
-# DocFX
-docfx/_site/
-docfx/api/
-docfx/obj/
-docfx-tool/
