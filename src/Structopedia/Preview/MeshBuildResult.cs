@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Vintagestory.API.Client;
 
 namespace Structopedia.Preview;
 

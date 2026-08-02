@@ -339,12 +339,13 @@ internal sealed class StructureGroupPage : GuiHandbookPage
 
         if (preview.Truncated)
         {
+            // Same number the slider label shows at the top of its travel: the layers the budget
+            // never reached are not part of its range either.
+            int topLayer = preview.MaxLayer - preview.MinLayer + 1;
+
             AddLine(
                 components,
-                Lang.Get(
-                    "structopedia:preview-truncated",
-                    maxPreviewVertices,
-                    (preview.TruncatedAtLayer ?? preview.MaxLayer) - preview.MinLayer + 1),
+                Lang.Get("structopedia:preview-truncated", maxPreviewVertices, topLayer),
                 CairoFont.WhiteDetailText());
         }
     }

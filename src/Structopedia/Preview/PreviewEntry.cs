@@ -19,8 +19,12 @@ internal sealed class PreviewEntry : IDisposable
         SizeX = build.SizeX;
         SizeY = build.SizeY;
         SizeZ = build.SizeZ;
-        MinLayer = build.MinLayer;
-        MaxLayer = build.MaxLayer;
+
+        // The slider spans what was drawn, not what the schematic holds. Layers the budget never
+        // reached, and layers holding nothing but markers, would be handle travel showing nothing.
+        MinLayer = layers.Count > 0 ? layers[0].Y : build.MinLayer;
+        MaxLayer = layers.Count > 0 ? layers[layers.Count - 1].Y : build.MaxLayer;
+
         Truncated = build.Truncated;
         TruncatedAtLayer = build.TruncatedAtLayer;
         ChiseledCount = build.ChiseledCount;
@@ -37,10 +41,10 @@ internal sealed class PreviewEntry : IDisposable
 
     internal int SizeZ { get; }
 
-    /// <summary>Lowest layer of the structure, the bottom of the slider range.</summary>
+    /// <summary>Lowest layer that was drawn, the bottom of the slider range.</summary>
     internal int MinLayer { get; }
 
-    /// <summary>Highest layer of the structure, the top of the slider range.</summary>
+    /// <summary>Highest layer that was drawn, the top of the slider range.</summary>
     internal int MaxLayer { get; }
 
     /// <summary>
