@@ -4,17 +4,17 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
-namespace Structopedia.Spike;
+namespace Structopedia.Preview;
 
 /// <summary>
-/// Rich text component that draws the spike schematic as a 3D mesh inside the handbook text flow,
-/// with an orbital camera driven by mouse drag.
+/// Rich text component that draws a structure as a 3D mesh inside the handbook text flow, with an
+/// orbital camera driven by mouse drag.
 /// </summary>
 /// <remarks>
 /// Structure copied from <c>SlideshowItemstackTextComponent</c> (bounds, scissor, render hook) and
 /// <c>InventoryItemRenderer.RenderItemstackToGui</c> (matrix build and uniform reset).
 /// </remarks>
-internal sealed class SpikePreviewComponent : RichTextComponentBase
+internal sealed class StructurePreviewComponent : RichTextComponentBase
 {
     /// <summary>Unscaled height of the viewport reserved in the text flow.</summary>
     private const double UnscaledHeight = 320.0;
@@ -25,7 +25,7 @@ internal sealed class SpikePreviewComponent : RichTextComponentBase
     /// </summary>
     private const float RenderZOffset = 50f;
 
-    /// <summary>Share of the viewport height the schematic diagonal should occupy at rest.</summary>
+    /// <summary>Share of the viewport height the structure diagonal should occupy at rest.</summary>
     private const float FitRatio = 0.75f;
 
     private const float DegreesPerPixel = 0.75f;
@@ -40,7 +40,7 @@ internal sealed class SpikePreviewComponent : RichTextComponentBase
     private const long HoverGraceMs = 250L;
 
     private readonly ICoreClientAPI capi;
-    private readonly StructopediaModSystem modSystem;
+    private readonly Func<PreviewMesh?> meshProvider;
     private readonly Matrixf modelMat = new Matrixf();
 
     private float yaw = InitialYaw;
@@ -61,11 +61,20 @@ internal sealed class SpikePreviewComponent : RichTextComponentBase
 
     private bool wheelSubscribed;
 
-    internal SpikePreviewComponent(ICoreClientAPI api, StructopediaModSystem modSystem)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StructurePreviewComponent"/> class, with the
+    /// camera back at its resting angles.
+    /// </summary>
+    /// <param name="api">Client API.</param>
+    /// <param name="meshProvider">
+    /// Hands out the mesh to draw, or null when there is none. Called on every frame, so the owner
+    /// stays free to build it late or to drop it.
+    /// </param>
+    internal StructurePreviewComponent(ICoreClientAPI api, Func<PreviewMesh?> meshProvider)
         : base(api)
     {
         capi = api;
-        this.modSystem = modSystem;
+        this.meshProvider = meshProvider;
 
         // Own line in the flow: GuiElementRichtext advances posY by our full height for EnumFloat.None.
         Float = EnumFloat.None;
@@ -107,9 +116,8 @@ internal sealed class SpikePreviewComponent : RichTextComponentBase
             return;
         }
 
-        // Built and uploaded on the first frame that needs it: we are on the main thread here.
-        SpikePreviewMesh? mesh = modSystem.GetOrCreateSpikeMesh();
-        if (mesh == null || mesh.MeshRef.Disposed || !mesh.MeshRef.Initialized)
+        PreviewMesh? mesh = meshProvider();
+        if (mesh == null || !mesh.IsUsable)
         {
             return;
         }
@@ -244,7 +252,7 @@ internal sealed class SpikePreviewComponent : RichTextComponentBase
             wheelSubscribed = false;
         }
 
-        // The mesh ref belongs to the mod system and outlives this component.
+        // The mesh ref belongs to the preview store and outlives this component.
         base.Dispose();
     }
 
@@ -287,7 +295,7 @@ internal sealed class SpikePreviewComponent : RichTextComponentBase
             && my >= lastRenderY && my <= lastRenderY + lastRenderHeight;
     }
 
-    private void EnsureZoom(SpikePreviewMesh mesh, LineRectangled rect)
+    private void EnsureZoom(PreviewMesh mesh, LineRectangled rect)
     {
         if (baseZoom > 0f)
         {

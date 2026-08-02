@@ -1,13 +1,14 @@
 using Vintagestory.API.Client;
 
-namespace Structopedia.Spike;
+namespace Structopedia.Preview;
 
 /// <summary>
-/// Outcome of a schematic mesh build: the merged CPU mesh, the schematic extents and per-block counters.
+/// Outcome of a structure mesh build: the merged CPU mesh, the structure extents and per-block
+/// counters describing what went in and what was left out.
 /// </summary>
-internal sealed class SpikeMeshBuildResult
+internal sealed class MeshBuildResult
 {
-    internal SpikeMeshBuildResult(MeshData mesh, int sizeX, int sizeY, int sizeZ)
+    internal MeshBuildResult(MeshData mesh, int sizeX, int sizeY, int sizeZ)
     {
         Mesh = mesh;
         SizeX = sizeX;
@@ -34,4 +35,10 @@ internal sealed class SpikeMeshBuildResult
 
     /// <summary>Blocks that resolved but produced no geometry, neither cached nor tesselated.</summary>
     internal int EmptyMeshCount { get; set; }
+
+    /// <summary>
+    /// True when the build stopped on the vertex budget instead of running out of blocks. The mesh is
+    /// still drawable, it just does not show the whole structure.
+    /// </summary>
+    internal bool Truncated { get; set; }
 }
