@@ -9,15 +9,18 @@ Structures added by installed mods are picked up the same way, since the mod rea
 schematics are registered rather than a hardcoded list. Everything runs client-side and
 nothing about worldgen or gameplay is changed.
 
-Pre-release. This repository currently holds the build setup, an empty client mod system and
-the test and CI plumbing.
+Pre-release. The catalog is in: the handbook gets a "Structures" tab holding one page per
+folder of schematics, with the variants of that folder, the size of the one on screen, its
+3D preview and the blocks it is built from. Still to come: the layer by layer view, a cache
+holding more than one preview at a time, and dropping the blocks nobody can see.
 
 ## Requirements
 
 The .NET 10 SDK, and a Vintage Story 1.22.6 install to compile against. Set the
 `VINTAGE_STORY` environment variable to the directory holding `VintagestoryAPI.dll`. That
 directory also needs `Mods/VSSurvivalMod.dll`, which is where the handbook and the structure
-worldgen code live. A server install works as well as a client one, which is what CI uses.
+worldgen code live, and `VintagestoryLib.dll`, which is where the mod loader keeps the folder
+a mod was loaded from. A server install works as well as a client one, which is what CI uses.
 
 ## Build
 
@@ -48,8 +51,7 @@ dotnet build src/Structopedia/Structopedia.csproj -c Release -t:PackMod
 ```
 
 Writes `release/Structopedia-<version>.zip`, holding the mod dll, `modinfo.json` and the
-`assets` tree once there is one. The game dlls are left out, the game provides them at
-runtime.
+`assets` tree. The game dlls are left out, the game provides them at runtime.
 
 ## Layout
 
