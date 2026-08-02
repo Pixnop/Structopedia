@@ -317,9 +317,9 @@ internal sealed class StructureGroupPage : GuiHandbookPage
     private void AddPreview(List<RichTextComponentBase> components, BlockSchematic schematic)
     {
         int index = variantIndex;
-        PreviewMesh? mesh = previews.GetOrBuild(pageCode, index, () => BuildMesh(schematic));
+        PreviewEntry? preview = previews.GetOrBuild(pageCode, index, () => BuildPreview(schematic));
 
-        if (mesh == null)
+        if (preview == null)
         {
             AddLine(components, Lang.Get("structopedia:preview-unavailable"), CairoFont.WhiteDetailText());
             return;
@@ -328,53 +328,63 @@ internal sealed class StructureGroupPage : GuiHandbookPage
         components.Add(new ClearFloatTextComponent(capi, 8f));
 
         // A fresh component on every compose, since the composer owns and disposes the previous one.
-        // It asks the store on every frame rather than holding the mesh, so a mesh released while the
+        // It asks the store on every frame rather than holding the preview, so one released while the
         // page is open is never drawn from.
         components.Add(new StructurePreviewComponent(
             capi,
-            () => previews.GetOrBuild(pageCode, index, () => BuildMesh(schematic))));
+            () => previews.GetOrBuild(pageCode, index, () => BuildPreview(schematic))));
 
         components.Add(new ClearFloatTextComponent(capi, 8f));
         AddLine(components, Lang.Get("structopedia:preview-controls"), CairoFont.WhiteDetailText());
 
-        if (mesh.Truncated)
+        if (preview.Truncated)
         {
             AddLine(
                 components,
-                Lang.Get("structopedia:preview-truncated", maxPreviewVertices),
+                Lang.Get(
+                    "structopedia:preview-truncated",
+                    maxPreviewVertices,
+                    (preview.TruncatedAtLayer ?? preview.MaxLayer) - preview.MinLayer + 1),
                 CairoFont.WhiteDetailText());
         }
     }
 
     /// <summary>
-    /// Builds and uploads the mesh of the variant on screen. Runs on the main thread, from the page
+    /// Builds and uploads the layers of the variant on screen. Runs on the main thread, from the page
     /// compose, which is where the tesselator and the block atlas can be touched.
     /// </summary>
-    private PreviewMesh? BuildMesh(BlockSchematic schematic)
+    private PreviewEntry? BuildPreview(BlockSchematic schematic)
     {
         MeshBuildResult build = SchematicMeshBuilder.Build(capi, schematic, maxPreviewVertices);
 
         logger.VerboseDebug(
-            "{0}: {1} blocks meshed, {2} filtered, {3} unknown, {4} without geometry; {5} vertices{6}.",
+            "{0}: {1} blocks meshed over {2} layers, {3} chiselled; skipped {4} filtered, {5} unknown, "
+                + "{6} without geometry, {7} chiselled without usable data, {8} shaped by a block entity; "
+                + "{9} vertices{10}.",
             pageCode,
             build.MergedCount,
+            build.Layers.Count,
+            build.ChiseledCount,
             build.FilteredCount,
             build.UnknownCount,
             build.EmptyMeshCount,
-            build.Mesh.VerticesCount,
-            build.Truncated ? ", truncated" : string.Empty);
+            build.ChiseledFallbackCount,
+            build.ClutterSkippedCount,
+            build.VerticesCount,
+            build.Truncated ? ", truncated at layer " + build.TruncatedAtLayer : string.Empty);
 
-        if (build.Mesh.VerticesCount == 0)
+        if (build.Layers.Count == 0)
         {
             return null;
         }
 
-        return new PreviewMesh(
-            capi.Render.UploadMultiTextureMesh(build.Mesh),
-            build.SizeX,
-            build.SizeY,
-            build.SizeZ,
-            build.Truncated);
+        var uploaded = new List<PreviewLayer>(build.Layers.Count);
+        foreach (LayerMesh layer in build.Layers)
+        {
+            uploaded.Add(new PreviewLayer(layer.Y, capi.Render.UploadMultiTextureMesh(layer.Mesh)));
+        }
+
+        return new PreviewEntry(uploaded, build);
     }
 
     private void AddBlockList(

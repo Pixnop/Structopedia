@@ -19,6 +19,17 @@ internal static class SchematicCellReader
     private const int YShift = 20;
 
     /// <summary>
+    /// Packs a position back into the index a schematic keys its lists by. Same layout as the
+    /// unpacking below, which is what lets a cell find its own block entity data.
+    /// </summary>
+    /// <param name="x">Position along the X axis, relative to the schematic origin.</param>
+    /// <param name="y">Position along the Y axis, relative to the schematic origin.</param>
+    /// <param name="z">Position along the Z axis, relative to the schematic origin.</param>
+    /// <returns>The packed index.</returns>
+    internal static uint PackIndex(int x, int y, int z)
+        => (uint)(((y & CoordinateMask) << YShift) | ((z & CoordinateMask) << ZShift) | (x & CoordinateMask));
+
+    /// <summary>
     /// Walks the parallel index and block id lists and unpacks each entry into a cell.
     /// A schematic stores a waterlogged cell as two consecutive entries sharing the same index; the
     /// second one carries the fluid and is flagged as such.
