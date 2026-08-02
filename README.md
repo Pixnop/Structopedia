@@ -34,9 +34,12 @@ and private members do not: see `stylecop.json`.
 dotnet test tests/Structopedia.Pure.Tests -c Release
 ```
 
-Unit tests only. They run against the API assembly without launching the game, so they stay
-fast enough to run on every commit. CI runs the same two commands on every push and pull
-request.
+The tests run against the API assembly without launching the game, so the whole suite takes
+about a second. Most are plain unit tests over the pure logic. A couple read the worldgen
+schematics from the install `VINTAGE_STORY` points at and replay the decoding rules against
+every one of them, roughly two million cells. Those two skip themselves, still green, when
+that folder is not there, so the suite works without a game install. CI runs the same two
+commands on every push and pull request.
 
 ## Package
 
