@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Structopedia</AssemblyName>
+    <RootNamespace>Structopedia</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="VintagestoryAPI">
+      <HintPath>$(VINTAGE_STORY)\VintagestoryAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="VSSurvivalMod">
+      <HintPath>$(VINTAGE_STORY)\Mods\VSSurvivalMod.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="modinfo.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!--
+    Builds the Mod DB release zip (dll + modinfo + assets, no game dlls).
+    Usage: dotnet build src/Structopedia/Structopedia.csproj -c Release -t:PackMod
+    Output: release/Structopedia-<version>.zip at the repo root.
+  -->
+  <Target Name="PackMod" DependsOnTargets="Build">
+    <PropertyGroup>
+      <ModStageDir>$(BaseIntermediateOutputPath)modzip/</ModStageDir>
+      <ModReleaseDir>$(MSBuildThisFileDirectory)../../release/</ModReleaseDir>
+      <ModZipPath>$(ModReleaseDir)Structopedia-$(Version).zip</ModZipPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <ModZipFile Include="$(TargetDir)Structopedia.dll" />
+      <ModZipFile Include="$(TargetDir)modinfo.json" />
+      <!-- Assets are optional today; the glob stays empty until the mod ships any. -->
+      <ModZipAsset Include="$(TargetDir)assets/**/*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(ModStageDir)" />
+    <Copy SourceFiles="@(ModZipFile)" DestinationFolder="$(ModStageDir)" />
+    <Copy SourceFiles="@(ModZipAsset)" DestinationFolder="$(ModStageDir)assets/%(RecursiveDir)" />
+    <MakeDir Directories="$(ModReleaseDir)" />
+    <ZipDirectory SourceDirectory="$(ModStageDir)" DestinationFile="$(ModZipPath)" Overwrite="true" />
+    <Message Importance="high" Text="Packed mod zip: $(ModZipPath)" />
+  </Target>
+
+</Project>

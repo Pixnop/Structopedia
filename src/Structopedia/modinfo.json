@@ -1,0 +1,13 @@
+{
+  "type": "code",
+  "modid": "structopedia",
+  "name": "Structopedia",
+  "version": "0.1.0",
+  "description": "Browse worldgen structures from the survival handbook: interactive 3D previews of the schematics shipped by the game and by installed mods. Fully client-side.",
+  "authors": ["Pixnop"],
+  "side": "Client",
+  "dependencies": {
+    "game": "",
+    "survival": ""
+  }
+}
