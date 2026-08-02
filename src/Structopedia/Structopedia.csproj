@@ -49,7 +49,6 @@
     <ItemGroup>
       <ModZipFile Include="$(TargetDir)Structopedia.dll" />
       <ModZipFile Include="$(TargetDir)modinfo.json" />
-      <!-- Assets are optional today; the glob stays empty until the mod ships any. -->
       <ModZipAsset Include="$(TargetDir)assets/**/*" />
     </ItemGroup>
     <RemoveDir Directories="$(ModStageDir)" />
