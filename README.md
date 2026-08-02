@@ -9,10 +9,12 @@ Structures added by installed mods are picked up the same way, since the mod rea
 schematics are registered rather than a hardcoded list. Everything runs client-side and
 nothing about worldgen or gameplay is changed.
 
-Pre-release. The catalog is in: the handbook gets a "Structures" tab holding one page per
-folder of schematics, with the variants of that folder, the size of the one on screen, its
-3D preview and the blocks it is built from. Still to come: the layer by layer view, a cache
-holding more than one preview at a time, and dropping the blocks nobody can see.
+Pre-release. The handbook gets a "Structures" tab holding one page per folder of schematics,
+with the variants of that folder, the size of the one on screen, its 3D preview and the
+blocks it is built from. A slider under the preview cuts the structure at a height, so a
+ruin can be read floor by floor, and chiselled blocks are drawn from their real shape rather
+than as placeholders. Still to come: dropping the blocks nobody can see, which is what
+would let the heaviest structures be drawn whole.
 
 ## Requirements
 

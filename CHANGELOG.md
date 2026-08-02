@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Structure catalog in the handbook: the client reads the worldgen schematics of the game and of every installed mod straight from the asset origins, and lists them under the "Structures" tab, one page per folder of schematics.
 - Structure pages: where the folder comes from, arrows to step through the variants it holds, the size of the one on screen, an orbital 3D preview of it, and the blocks it is built from as clickable icons leading to their own handbook page. A structure too heavy to draw whole is cut off at the vertex budget and says so.
 - Settings file (`ModConfig/structopedia.json`), written with its defaults the first time the mod runs: whether the story line structures are listed, and how many vertices a preview may reach.
+- Layer slicing: a slider under the preview cuts the structure at a height, so the inside of a ruin can be looked at floor by floor. Drag the handle, click anywhere on the track, or hold Ctrl and scroll over the preview to step one layer at a time. It starts on the whole structure and goes back to it on every new page or variant.
+- Real meshes for chiselled blocks, rebuilt from the block entity data the schematic carries and drawn through the same builder the world renderer uses. 540 of the 701 schematics the game ships hold one.
+- Multi-structure preview cache: the previews already built stay on the graphics card until they fall out of the cache, so stepping through the variants of a page and back is instant. How many are held is the existing `PreviewCacheSize` setting.
+
+### Fixed
+- Chiselled blocks no longer draw as the placeholder cube of their block type. A chiselled block whose data cannot be used is left out of the preview instead, and so are the clutter blocks, whose shape also only exists in a block entity. Both are still listed among the blocks the structure is built from.
+- A structure past the vertex budget now loses its top rather than a scattering of blocks throughout: the budget is spent layer by layer from the ground up, and the page says which layer it reached.
 
 ### Removed
 - The render spike page, replaced by the catalog it was written to prove.
