@@ -34,6 +34,15 @@
       <HintPath>$(VINTAGE_STORY)\Lib\protobuf-net.dll</HintPath>
       <Private>true</Private>
     </Reference>
+    <!--
+      Block type files are json with unquoted keys, comments and trailing commas, which only the
+      parser the game itself uses will read. CuratedBuildSchematicsTests reads one of them to check
+      a build guide against the multiblock structure the game declares.
+    -->
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(VINTAGE_STORY)\Lib\Newtonsoft.Json.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
   <!-- Hand written schematics used to exercise the parser, including its failure path. -->
