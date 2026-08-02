@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Structopedia.Schematics;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,6 +32,16 @@ public sealed class VanillaSchematicsTests
 
     /// <summary>How many offending files a failure message lists before summarising the rest.</summary>
     private const int MaxReportedFailures = 20;
+
+    /// <summary>
+    /// 540 of the 1.22.6 schematics hold a chiselled block, which is what makes drawing them from
+    /// their block entity data worth the trouble. Floors, not exact counts, so a content patch does
+    /// not break the build.
+    /// </summary>
+    private const int MinimumChiselledFileCount = 400;
+
+    /// <summary>Those 540 files hold 75209 chiselled blocks between them.</summary>
+    private const int MinimumChiselledCellCount = 50_000;
 
     private readonly ITestOutputHelper _output;
 
@@ -132,6 +143,112 @@ public sealed class VanillaSchematicsTests
         Assert.True(tally.MetaCount > 0, "The vug is expected to carry worldgen markers.");
         Assert.DoesNotContain(tally.Blocks, row => row.Code.Path.StartsWith("meta-", StringComparison.Ordinal));
     }
+
+    /// <summary>
+    /// The preview draws a chiselled block from its block entity data, which means finding that data
+    /// by the packed position of the block and moving the material ids inside it onto the running
+    /// install. Both steps are assumptions about a format nobody documented, so they are replayed
+    /// here against every chiselled block the game ships.
+    /// </summary>
+    [Fact]
+    public void Every_Chiselled_Block_Of_The_Vanilla_Schematics_Can_Be_Rebuilt()
+    {
+        if (!TryResolveSchematicsFolder(out string folder))
+        {
+            return;
+        }
+
+        string[] files = Directory.GetFiles(folder, "*.json", SearchOption.AllDirectories);
+        var withoutData = new List<string>();
+        var unreadable = new List<string>();
+        var unmappable = new List<string>();
+        int filesWithChiselled = 0;
+        int chiselledCells = 0;
+
+        foreach (string file in files)
+        {
+            string relativePath = Path.GetRelativePath(folder, file);
+            string error = string.Empty;
+
+            BlockSchematic? schematic = BlockSchematic.LoadFromString(File.ReadAllText(file), ref error);
+            if (schematic == null)
+            {
+                continue;
+            }
+
+            // The mod itself asks the block registry whether a block is a BlockMicroBlock. There is no
+            // registry here, so the code stands in for it, which is what names those blocks anyway.
+            var chiselledIds = new HashSet<int>();
+            foreach (KeyValuePair<int, AssetLocation> pair in schematic.BlockCodes)
+            {
+                if (pair.Value.Path.StartsWith("microblock", StringComparison.Ordinal)
+                    || pair.Value.Path.StartsWith("chiseledblock", StringComparison.Ordinal))
+                {
+                    chiselledIds.Add(pair.Key);
+                }
+            }
+
+            if (chiselledIds.Count == 0)
+            {
+                continue;
+            }
+
+            filesWithChiselled++;
+            IReadOnlyList<SchematicCell> cells = SchematicCellReader.ReadCells(schematic);
+
+            for (int i = 0; i < cells.Count; i++)
+            {
+                if (!chiselledIds.Contains(schematic.BlockIds[i]))
+                {
+                    continue;
+                }
+
+                chiselledCells++;
+                SchematicCell cell = cells[i];
+                uint packed = SchematicCellReader.PackIndex(cell.X, cell.Y, cell.Z);
+
+                if (!schematic.BlockEntities.TryGetValue(packed, out string? encoded))
+                {
+                    withoutData.Add($"{relativePath}: nothing keyed at ({cell.X},{cell.Y},{cell.Z})");
+                    continue;
+                }
+
+                if (schematic.DecodeBlockEntityData(encoded)["materials"] is not IntArrayAttribute materials)
+                {
+                    unreadable.Add($"{relativePath}: ({cell.X},{cell.Y},{cell.Z}) has no int materials");
+                    continue;
+                }
+
+                int[]? remapped = MicroBlockMaterials.Remap(
+                    materials.value,
+                    schematic.BlockCodes,
+                    AnythingNamedExists,
+                    substituteUnresolved: true);
+
+                if (remapped == null || remapped.Length != materials.value.Length)
+                {
+                    unmappable.Add($"{relativePath}: ({cell.X},{cell.Y},{cell.Z}) lost its materials");
+                }
+            }
+        }
+
+        _output.WriteLine(
+            $"Rebuilt the materials of {chiselledCells} chiselled blocks " +
+            $"across {filesWithChiselled} of {files.Length} vanilla schematics.");
+
+        Assert.True(filesWithChiselled >= MinimumChiselledFileCount, $"Only {filesWithChiselled} schematics held a chiselled block.");
+        Assert.True(chiselledCells >= MinimumChiselledCellCount, $"Only {chiselledCells} chiselled blocks were found.");
+        Assert.True(withoutData.Count == 0, Describe("keyed a chiselled block to no data", withoutData));
+        Assert.True(unreadable.Count == 0, Describe("stored materials in a form the preview cannot read", unreadable));
+        Assert.True(unmappable.Count == 0, Describe("named a material its own code table does not hold", unmappable));
+    }
+
+    /// <summary>
+    /// Stands in for a block registry holding every block a schematic can possibly name, so a failure
+    /// can only come from the code table of the schematic and not from what this install happens to
+    /// have.
+    /// </summary>
+    private static int? AnythingNamedExists(AssetLocation code) => code.GetHashCode() | 1;
 
     /// <summary>
     /// Reports the first index that comes back after something else was written in between. A

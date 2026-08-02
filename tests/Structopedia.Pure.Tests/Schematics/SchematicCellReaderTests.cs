@@ -143,6 +143,22 @@ public sealed class SchematicCellReaderTests
         Assert.Empty(SchematicCellReader.ReadCells(new BlockSchematic()));
     }
 
+    [Theory]
+    [InlineData(0, 0, 0)]
+    [InlineData(1, 2, 3)]
+    [InlineData(1023, 1023, 1023)]
+    [InlineData(7, 0, 511)]
+    public void PackIndex_Is_Undone_By_ReadCells(int x, int y, int z)
+    {
+        // Block entity data is keyed by the same packed index as the block lists, so a cell has to be
+        // able to find its own.
+        BlockSchematic schematic = Build([SchematicCellReader.PackIndex(x, y, z)], [Stone]);
+
+        SchematicCell cell = Assert.Single(SchematicCellReader.ReadCells(schematic));
+
+        Assert.Equal((x, y, z), (cell.X, cell.Y, cell.Z));
+    }
+
     private static BlockSchematic Build(uint[] indices, int[] blockIds)
     {
         var schematic = new BlockSchematic

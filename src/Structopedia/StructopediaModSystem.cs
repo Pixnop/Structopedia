@@ -18,10 +18,14 @@ public sealed class StructopediaModSystem : ModSystem
     /// <summary>Name of the settings file, written below the ModConfig folder.</summary>
     private const string ConfigFileName = "structopedia.json";
 
-    private readonly PreviewMeshStore previews = new PreviewMeshStore();
-
     private ICoreClientAPI? capi;
     private ModSystemSurvivalHandbook? handbook;
+
+    /// <summary>
+    /// Owns the built previews. Created with the catalog, since how many it holds is a setting and
+    /// the settings are only read once the client is up.
+    /// </summary>
+    private PreviewMeshStore? previews;
 
     /// <summary>
     /// The catalog pages, built once and handed to the handbook again on every reload. See
@@ -61,7 +65,8 @@ public sealed class StructopediaModSystem : ModSystem
             handbook = null;
         }
 
-        previews.Dispose();
+        previews?.Dispose();
+        previews = null;
 
         if (pages != null)
         {
@@ -97,8 +102,8 @@ public sealed class StructopediaModSystem : ModSystem
             return;
         }
 
-        previews.Clear();
         pages ??= BuildPages(capi);
+        previews?.Clear();
 
         foreach (StructureGroupPage page in pages)
         {
@@ -113,6 +118,8 @@ public sealed class StructopediaModSystem : ModSystem
     private List<StructureGroupPage> BuildPages(ICoreClientAPI api)
     {
         StructopediaConfig config = LoadConfig(api);
+        previews = new PreviewMeshStore(config.PreviewCacheSize);
+
         IReadOnlyList<SchematicScanEntry> entries = SchematicScanner.Scan(api, Mod.Logger);
 
         var sourcesByVariant = new Dictionary<(StructureOrigin Origin, string RelativePath), SchematicSource>();
