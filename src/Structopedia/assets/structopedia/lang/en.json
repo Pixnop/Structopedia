@@ -2,6 +2,7 @@
   "game:handbook-category-structures": "Structures",
   "source-game": "Shipped with Vintage Story",
   "source-mod": "Added by the mod {0}",
+  "source-curated": "Construction guide",
   "variant": "Variant {0} of {1}: {2}",
   "dimensions": "Size: {0} x {1} x {2} blocks",
   "preview-controls": "Left-drag to rotate, right-drag or scroll to zoom. Drag the slider under the preview, or hold Ctrl and scroll over it, to cut the structure at a layer.",
@@ -12,5 +13,11 @@
   "blocks-used": "Blocks used",
   "block-count": "x {0}",
   "unknown-block": "{0} x {1}, block not installed",
-  "more-blocks": "and {0} more block types"
+  "more-blocks": "and {0} more block types",
+  "build-title-cementation-furnace": "Cementation furnace",
+  "build-title-charcoal-pit": "Charcoal pit",
+  "build-title-bloomery": "Bloomery",
+  "build-desc-cementation-furnace": "Two stone coffin sections face each other inside a shell of refractory bricks, over a floor of six gratings. The game checks eighty positions around the northern section, and the hollow inside is one of them, so that space has to stay empty. The shaft above the lids takes gratings or nothing at all. Any brick tier is accepted, the higher ones crack less often. The door can be a solid or windowed metal door, or an old iron door. Heat comes from underneath, from two burning coal piles two blocks below the sections. The pair holds sixteen carburisable ingots and five layers of eight pieces of coke or charcoal, one layer for every four ingots, and both lids have to be on before anything happens.",
+  "build-desc-charcoal-pit": "Firewood piles stacked into a block, the pit sitting on one of them, soil closing everything in. Fuel means a pile of firewood on the ground, and a full pile of thirty two gives the most charcoal. A seal means any block that does not burn and turns a solid face towards the pile, which soil does. Every face counts, the bottom included. The pit spreads from the lit block through the piles touching it, and stops at eleven blocks along any axis. Light it, then close the last hole within half an hour of game time. A gap found after that restarts the eighteen hour burn and can set the wood alight.",
+  "build-desc-bloomery": "A bloomery base with its chimney one block above. Without that chimney the game will not light it at all. It holds up to six pieces of fuel burning at 1200 degrees or hotter for over thirty seconds, which means charcoal or coke, and ore melting between 1000 and 1500 degrees. Ore capacity is six times the smelting ratio of that ore, so a hundred and twenty iron nuggets against six charcoal, and it only lights while the ore count stays at or under that ratio times the fuel count. A firing runs ten hours of game time, and breaking the base afterwards drops the bloom."
 }

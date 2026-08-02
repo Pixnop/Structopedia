@@ -69,11 +69,20 @@ internal static class CatalogBuilder
     }
 
     /// <summary>
-    /// Orders two groups. Story content sinks to the bottom, then titles decide; the remaining
-    /// comparisons only exist so groups that look alike still come out in a fixed order.
+    /// Orders two groups. The build guides come first, since they answer a question a player is
+    /// asking right now rather than showing what the generator might drop somewhere; story content
+    /// sinks to the bottom; then titles decide. The remaining comparisons only exist so groups that
+    /// look alike still come out in a fixed order.
     /// </summary>
     private static int Compare(StructureGroup left, StructureGroup right)
     {
+        bool leftCurated = left.Origin.Kind == StructureOriginKind.Curated;
+        bool rightCurated = right.Origin.Kind == StructureOriginKind.Curated;
+        if (leftCurated != rightCurated)
+        {
+            return leftCurated ? -1 : 1;
+        }
+
         if (left.IsStory != right.IsStory)
         {
             return left.IsStory ? 1 : -1;
