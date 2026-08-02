@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Worldgen randomizer blocks are no longer drawn or counted. They swap themselves for one of the blocks they hold while a structure generates, so the pink cubes they show up as, 712 of them across 167 of the 701 schematics the game ships, were never part of any structure.
 - Chiselled blocks no longer draw as the placeholder cube of their block type. A chiselled block whose data cannot be used is left out of the preview instead, and so are the clutter blocks, whose shape also only exists in a block entity. Both are still listed among the blocks the structure is built from.
 - A structure past the vertex budget now loses its top rather than a scattering of blocks throughout: the budget is spent layer by layer from the ground up, and the page says which layer it reached.
+- Large zoomed previews are no longer sliced by the far plane of the handbook. The projection the game sets up for its interface only keeps 152 units of depth behind the page, which a big structure at the zoom ceiling goes straight through, and the cut turned with the camera because the plane faces the viewer rather than the structure. The preview is now drawn far enough forward that its back corner clears the plane whichever way it has been turned.
 
 ### Removed
 - The render spike page, replaced by the catalog it was written to prove.
